@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubergo-loadgen
+  namespace: app
+  labels:
+    app: kubergo-loadgen
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kubergo-loadgen
+  template:
+    metadata:
+      labels:
+        app: kubergo-loadgen
+    spec:
+      containers:
+        - name: loadgen
+          image: curlimages/curl:8.10.1
+          args:
+            - sh
+            - -c
+            - |
+              echo "loadgen started";
+              while true; do
+                curl -s -o /dev/null http://kubergo/api/v1/analyze?debug=false;
+              done
+          resources:
+            requests:
+              cpu: 50m
+              memory: 32Mi
+            limits:
+              cpu: 200m
+              memory: 64Mi

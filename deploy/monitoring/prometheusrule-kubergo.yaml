@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: kubergo-rules
+  namespace: monitoring
+  labels:
+    release: monitoring
+spec:
+  groups:
+    - name: kubergo.rules
+      rules:
+        - alert: KubergoHighAnomalyRate
+          expr: sum(rate(kubergo_anomalies_total[1m])) * 60 > 5
+          for: 1m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Kubergo anomaly rate is high"
+            description: "Anomalies per minute is above 5 for more than 1 minute."
